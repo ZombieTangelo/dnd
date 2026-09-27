@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&amp;D Warmup Questions</title>
+<style>
+  /* ---------- Variables ---------- */
+  :root {
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --bg: #121212;
+    --surface: #1a1a1a;
+    --used-bg: #0c0c0c;
+    --text: #e8e8e8;
+    --muted: #949494;
+    --border: #333333;
+    --border-strong: #4a4a4a;
+    --accent: #ffffff;
+    --danger: #e07a7a;
+    --danger-bg: #2a1717;
+    --success: #7dc98a;
+    --radius: 4px;
+  }
+
+  /* ---------- Base ---------- */
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 2.75rem 1.5rem 1.5rem 1.5rem;
+    font-family: var(--font);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.4;
+  }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Buttons (shared) ---------- */
+  button {
+    font-family: var(--font);
+    font-size: 0.95rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #242424;
+  }
+
+  button:active {
+    background: #2c2c2c;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  button.primary {
+    background: var(--text);
+    color: #121212;
+    border-color: var(--text);
+  }
+
+  button.primary:hover {
+    background: #cfcfcf;
+  }
+
+  .danger-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.7rem;
+    color: var(--danger);
+    border-color: var(--border);
+    background: var(--surface);
+  }
+
+  .danger-btn:hover {
+    background: var(--danger-bg);
+    border-color: var(--danger);
+  }
+
+  .danger-btn.confirm-armed {
+    background: var(--danger);
+    color: #121212;
+    border-color: var(--danger);
+  }
+
+  .danger-btn.confirm-armed:hover {
+    background: #c96060;
+  }
+
+  /* ---------- Pick control ---------- */
+  .controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  #pickRandomBtn {
+    font-size: 1.15rem;
+    font-weight: 600;
+    padding: 0.9rem 2.2rem;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 6px;
+  }
+
+  /* ---------- Selected item display ---------- */
+  @keyframes fadeInSelected {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .selected-display {
+    font-size: 1.3rem;
+    font-style: italic;
+    text-align: center;
+    padding: 0.4rem 0 1.25rem 0;
+    word-break: break-word;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+  }
+
+  .selected-display.fade-in {
+    animation: fadeInSelected 0.3s ease;
+  }
+
+  .selected-note {
+    font-size: 0.85rem;
+    font-style: normal;
+    color: var(--muted);
+    margin-top: 0.4rem;
+    text-shadow: none;
+  }
+
+  .note-indicator {
+    color: var(--muted);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* ---------- List meta row (count + auto-mark toggle) ---------- */
+  .list-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .unused-count {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .auto-mark-toggle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .auto-mark-toggle input {
+    cursor: pointer;
+  }
+
+  /* ---------- List ---------- */
+  ul.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  li.item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.65rem 0.75rem;
+    background: var(--surface);
+    cursor: pointer;
+  }
+
+  li.item.used {
+    background: var(--used-bg);
+    border-color: transparent;
+  }
+
+  li.item.selected {
+    border-color: var(--accent);
+  }
+
+  .item-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .item-text-row {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .expand-indicator {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .item-text {
+    font-size: 0.98rem;
+    word-break: break-word;
+  }
+
+  li.item.used .item-text {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .item-actions button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .note-field {
+    margin-top: 0.5rem;
+  }
+
+  .note-field input[type="text"] {
+    font-size: 0.9rem;
+  }
+
+  .empty-state {
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 1rem 0;
+  }
+
+  /* ---------- Pagination ---------- */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+
+  .pagination button {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    color: var(--muted);
+    background: transparent;
+    border-color: var(--border);
+  }
+
+  .pagination button:hover {
+    background: #242424;
+    color: var(--text);
+  }
+
+  .page-indicator {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding: 0 0.3rem;
+  }
+
+  /* ---------- Add-questions section ---------- */
+  .add-section {
+    margin: 1.5rem 0 2rem 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .add-section h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--muted);
+  }
+
+  .add-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .add-row textarea#newItemInput {
+    min-height: 5.5rem;
+  }
+
+  .add-buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  input[type="text"], textarea {
+    font-family: var(--font);
+    font-size: 0.95rem;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    background: var(--surface);
+    width: 100%;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .add-feedback {
+    font-size: 0.85rem;
+    color: var(--success);
+    margin-top: 0.4rem;
+    display: none;
+  }
+
+  .add-feedback.visible {
+    display: block;
+  }
+
+  /* ---------- Bottom bar (links + danger zone) ---------- */
+  .bottom-bar {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .links-section {
+    font-size: 0.8rem;
+  }
+
+  .links-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .links-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .links-list a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .links-list a:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+
+  .danger-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 420px) {
+    body { padding: 2rem 1rem 1rem 1rem; }
+    .bottom-bar { flex-direction: column; }
+    .danger-zone { align-items: stretch; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div id="selectedDisplay" class="selected-display" style="display:none;"></div>
+
+  <div class="controls">
+    <button id="pickRandomBtn" class="primary"></button>
+  </div>
+
+  <div class="list-meta">
+    <div id="unusedCount" class="unused-count"></div>
+    <label class="auto-mark-toggle">
+      <input type="checkbox" id="autoMarkToggle">
+      Auto-mark answered
+    </label>
+  </div>
+
+  <ul class="list" id="itemList"></ul>
+
+  <div id="pagination" class="pagination" style="display:none;"></div>
+
+  <div class="add-section">
+    <h2>Add questions</h2>
+    <div class="add-row">
+      <textarea id="newItemInput" placeholder="One item per line..."></textarea>
+      <div class="add-buttons">
+        <button id="addItemBtn">Add</button>
+      </div>
+    </div>
+    <div class="add-feedback" id="addFeedback"></div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="links-section">
+      <div class="links-title">Example questions:</div>
+      <ul class="links-list">
+        <li><a href="https://www.reddit.com/r/BehindTheTables/comments/8es6vn/d100_warmup_questions/" target="_blank" rel="noopener noreferrer">d100 - Warmup questions</a></li>
+        <li><a href="https://ofmetalandmagic.com/homebrewtavern/30-roleplay-warmup-questions" target="_blank" rel="noopener noreferrer">30 warmup questions</a></li>
+        <li><a href="https://justicearman.com/2020/09/25/weekly-roleplay-warm-up/" target="_blank" rel="noopener noreferrer">Weekly Roleplay Warm Up</a></li>
+        <li><a href="https://conversationstartersworld.com/questions-to-get-to-know-someone/" target="_blank" rel="noopener noreferrer">200 Great Questions to Get to Know Someone</a></li>
+        <li><a href="https://en.uesp.net/wiki/Morrowind:Class_Quiz" target="_blank" rel="noopener noreferrer">Morrowind class quiz</a></li>
+      </ul>
+    </div>
+
+    <div class="danger-zone" id="dangerZone">
+      <button id="markAllNewBtn" class="danger-btn">Mark all as new</button>
+      <button id="resetBtn" class="danger-btn">Reset all data</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ================= Config =================
+  var STORAGE_KEY = "dndWarmupQuestions.v1";
+  var PAGE_SIZE = 10;
+  var CONFIRM_TIMEOUT_MS = 4000;
+  var FEEDBACK_HIDE_MS = 4000;
+
+  var DEFAULT_ITEMS = [];
+
+  var PICK_LABELS = [
+    "Ask me a question",
+    "Give me another one",
+    "Ask me anything",
+    "Next question",
+    "Let me tell you something",
+    "Hit me with a question",
+    "Surprise me",
+    "One more question",
+    "Fire away",
+    "What do you want to know"
+  ];
+
+  var MARK_ALL_NEW_LABEL = "Mark all as new";
+
+  // A line is valid if it contains at least one character that is not
+  // whitespace and not punctuation (i.e. some actual word/number content).
+  var VALID_LINE_RE = /[^\s!-\/:-@\[-`{-~]/;
+
+  // Strips any leading run of whitespace, digits, and punctuation (e.g.
+  // "1. ", "- ", "12) ") so pasted numbered/bulleted lists add cleanly.
+  var LEADING_STRIP_RE = /^[\s\d!-\/:-@\[-`{-~]+/;
+
+  // ================= State =================
+  // items: [{ text, used, note }]
+  var state = {
+    items: [],
+    selectedText: null,   // currently selected item's text, or null
+    currentPage: 1,
+    pickMode: "ask",       // "ask" (normal pick) or "convenience" (mark-all-as-new shortcut)
+    autoMarkUsed: false    // whether picking an item automatically marks it as used
+  };
+
+  var feedbackHideTimer = null;
+
+  // ================= Persistence =================
+  function loadState() {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    var parsedItems = null;
+    var parsedAutoMark = false;
+
+    if (raw) {
+      try {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed.items)) parsedItems = parsed.items;
+        if (typeof parsed.autoMarkUsed === "boolean") parsedAutoMark = parsed.autoMarkUsed;
+      } catch (e) {
+        parsedItems = null;
+      }
+    }
+
+    state.items = parsedItems || defaultItemSet();
+    state.autoMarkUsed = parsedAutoMark;
+    if (!parsedItems) saveState();
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      items: state.items,
+      autoMarkUsed: state.autoMarkUsed
+    }));
+  }
+
+  function defaultItemSet() {
+    return DEFAULT_ITEMS.map(function (t) {
+      return { text: t, used: false, note: "" };
+    });
+  }
+
+  // ================= Helpers =================
+  function findItem(text) {
+    for (var i = 0; i < state.items.length; i++) {
+      if (state.items[i].text === text) return state.items[i];
+    }
+    return null;
+  }
+
+  function itemExists(text) {
+    return findItem(text) !== null;
+  }
+
+  function unusedItems() {
+    return state.items.filter(function (i) { return !i.used; });
+  }
+
+  // Unused items first (existing order), used items after (existing order).
+  function sortedForDisplay() {
+    var unused = state.items.filter(function (i) { return !i.used; });
+    var used = state.items.filter(function (i) { return i.used; });
+    return unused.concat(used);
+  }
+
+  function goToPageContaining(text) {
+    var all = sortedForDisplay();
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].text === text) {
+        state.currentPage = Math.floor(i / PAGE_SIZE) + 1;
+        return;
+      }
+    }
+  }
+
+  function randomPickLabel() {
+    return PICK_LABELS[Math.floor(Math.random() * PICK_LABELS.length)];
+  }
+
+  // ================= Rendering =================
+  function render() {
+    renderPickButton();
+    renderSelectedDisplay();
+    renderUnusedCount();
+    renderList();
+    renderPagination();
+  }
+
+  function renderPickButton() {
+    var btn = document.getElementById("pickRandomBtn");
+
+    if (state.items.length === 0) {
+      btn.disabled = true;
+      btn.textContent = "Add questions below";
+      state.pickMode = "empty";
+      return;
+    }
+    btn.disabled = false;
+
+    var hasUnused = unusedItems().length > 0;
+
+    if (!hasUnused && state.pickMode !== "convenience") {
+      state.pickMode = "convenience";
+      btn.textContent = MARK_ALL_NEW_LABEL;
+    } else if (hasUnused && state.pickMode !== "ask") {
+      state.pickMode = "ask";
+      btn.textContent = randomPickLabel();
+    } else if (!btn.textContent) {
+      // First render: always start on the fixed default label, not a
+      // randomly cycled one — cycling only kicks in once the button is used.
+      btn.textContent = hasUnused ? PICK_LABELS[0] : MARK_ALL_NEW_LABEL;
+      state.pickMode = hasUnused ? "ask" : "convenience";
+    }
+  }
+
+  function renderSelectedDisplay() {
+    var el = document.getElementById("selectedDisplay");
+    var selectedItem = state.selectedText ? findItem(state.selectedText) : null;
+
+    el.innerHTML = "";
+
+    if (!selectedItem) {
+      el.style.display = "none";
+      return;
+    }
+
+    el.style.display = "block";
+
+    var textNode = document.createElement("div");
+    textNode.textContent = selectedItem.text;
+    el.appendChild(textNode);
+
+    if (selectedItem.note && selectedItem.note.trim() !== "") {
+      var noteNode = document.createElement("div");
+      noteNode.className = "selected-note";
+      noteNode.textContent = selectedItem.note;
+      el.appendChild(noteNode);
+    }
+  }
+
+  function renderUnusedCount() {
+    var el = document.getElementById("unusedCount");
+    var count = unusedItems().length;
+    el.textContent = count + " new question" + (count === 1 ? "" : "s");
+  }
+
+  function renderList() {
+    var listEl = document.getElementById("itemList");
+    listEl.innerHTML = "";
+
+    if (state.items.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "No questions yet. Add some below";
+      listEl.appendChild(empty);
+      return;
+    }
+
+    var all = sortedForDisplay();
+    var totalPages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+    state.currentPage = Math.min(Math.max(state.currentPage, 1), totalPages);
+
+    var startIdx = (state.currentPage - 1) * PAGE_SIZE;
+    var pageItems = all.slice(startIdx, startIdx + PAGE_SIZE);
+
+    pageItems.forEach(function (item) {
+      listEl.appendChild(buildListItem(item));
+    });
+  }
+
+  function buildListItem(item) {
+    var isSelected = state.selectedText === item.text;
+
+    var li = document.createElement("li");
+    li.className = "item" + (item.used ? " used" : "") + (isSelected ? " selected" : "");
+    li.title = "Click to select this item";
+    li.addEventListener("click", function () {
+      if (state.selectedText === item.text) {
+        state.selectedText = null;
+      } else {
+        state.selectedText = item.text;
+        goToPageContaining(item.text);
+      }
+      render();
+    });
+
+    var top = document.createElement("div");
+    top.className = "item-top";
+
+    var textRow = document.createElement("div");
+    textRow.className = "item-text-row";
+
+    var indicator = document.createElement("span");
+    indicator.className = "expand-indicator";
+    indicator.textContent = isSelected ? "▾" : "▸";
+
+    var textEl = document.createElement("div");
+    textEl.className = "item-text";
+    textEl.textContent = item.text;
+
+    textRow.appendChild(indicator);
+    textRow.appendChild(textEl);
+
+    var actions = document.createElement("div");
+    actions.className = "item-actions";
+
+    if (item.note && item.note.trim() !== "") {
+      var noteIndicator = document.createElement("span");
+      noteIndicator.className = "note-indicator";
+      noteIndicator.textContent = "✎";
+      noteIndicator.title = "This question has a note";
+      actions.appendChild(noteIndicator);
+    }
+
+    var useBtn = document.createElement("button");
+    useBtn.textContent = item.used ? "Answered" : "New";
+    useBtn.title = item.used
+      ? "This question has been answered. Click to mark as new"
+      : "This question is new. Click to mark as answered";
+    useBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleUsed(item);
+    });
+    actions.appendChild(useBtn);
+
+    if (isSelected) {
+      var removeBtn = document.createElement("button");
+      removeBtn.className = "danger-btn";
+      removeBtn.addEventListener("click", function (e) { e.stopPropagation(); });
+      setUpConfirmButton(removeBtn, "Remove", "Confirm?", function () {
+        removeItem(item);
+      });
+      actions.appendChild(removeBtn);
+    }
+
+    top.appendChild(textRow);
+    top.appendChild(actions);
+    li.appendChild(top);
+
+    if (isSelected) {
+      li.appendChild(buildNoteField(item));
+    }
+
+    return li;
+  }
+
+  function buildNoteField(item) {
+    var noteField = document.createElement("div");
+    noteField.className = "note-field";
+
+    var noteInput = document.createElement("input");
+    noteInput.type = "text";
+    noteInput.placeholder = "Optional note...";
+    noteInput.value = item.note || "";
+    noteInput.addEventListener("click", function (e) { e.stopPropagation(); });
+    noteInput.addEventListener("change", function () {
+      item.note = noteInput.value;
+      saveState();
+    });
+
+    noteField.appendChild(noteInput);
+    return noteField;
+  }
+
+  function renderPagination() {
+    var el = document.getElementById("pagination");
+    el.innerHTML = "";
+
+    var totalPages = Math.max(1, Math.ceil(state.items.length / PAGE_SIZE));
+
+    if (totalPages <= 1) {
+      el.style.display = "none";
+      return;
+    }
+    el.style.display = "flex";
+
+    function addBtn(label, targetPage) {
+      var btn = document.createElement("button");
+      btn.textContent = label;
+      btn.addEventListener("click", function () {
+        state.currentPage = targetPage;
+        render();
+      });
+      el.appendChild(btn);
+    }
+
+    if (state.currentPage > 1) {
+      addBtn("First", 1);
+      addBtn("Previous", state.currentPage - 1);
+    }
+
+    var indicator = document.createElement("span");
+    indicator.className = "page-indicator";
+    indicator.textContent = state.currentPage + " / " + totalPages;
+    el.appendChild(indicator);
+
+    if (state.currentPage < totalPages) {
+      addBtn("Next", state.currentPage + 1);
+      addBtn("Last", totalPages);
+    }
+  }
+
+  // ================= Actions =================
+  function toggleUsed(item) {
+    item.used = !item.used;
+    saveState();
+    render();
+  }
+
+  function pickRandom() {
+    var unused = unusedItems();
+    if (unused.length === 0) return; // handled by pick-button convenience mode instead
+
+    var choice = unused[Math.floor(Math.random() * unused.length)];
+    if (state.autoMarkUsed) choice.used = true;
+    state.selectedText = choice.text;
+    goToPageContaining(choice.text);
+    saveState();
+    render();
+
+    // Cycle the button's label, unless picking just emptied the unused
+    // pool and render() already switched it into convenience mode.
+    if (state.pickMode === "ask") {
+      document.getElementById("pickRandomBtn").textContent = randomPickLabel();
+    }
+
+    var displayEl = document.getElementById("selectedDisplay");
+    displayEl.classList.remove("fade-in");
+    void displayEl.offsetWidth; // restart the animation
+    displayEl.classList.add("fade-in");
+  }
+
+  function handlePickButtonClick() {
+    if (unusedItems().length === 0) {
+      markAllAsNew(); // convenience shortcut, no confirmation needed here
+    } else {
+      pickRandom();
+    }
+  }
+
+  function addItems() {
+    var input = document.getElementById("newItemInput");
+    var feedback = document.getElementById("addFeedback");
+    var rawLines = input.value.split("\n");
+
+    var added = 0;
+    var skippedInvalid = 0;
+    var skippedDuplicate = 0;
+    var seenThisBatch = {};
+
+    rawLines.forEach(function (rawLine) {
+      var trimmedRaw = rawLine.trim();
+      if (!trimmedRaw) return; // blank line, ignore silently
+
+      var text = trimmedRaw.replace(LEADING_STRIP_RE, "").trim();
+
+      if (!text || !VALID_LINE_RE.test(text)) {
+        skippedInvalid++;
+        return;
+      }
+      if (itemExists(text) || seenThisBatch[text]) {
+        skippedDuplicate++;
+        return;
+      }
+
+      state.items.push({ text: text, used: false, note: "" });
+      seenThisBatch[text] = true;
+      added++;
+    });
+
+    if (added > 0) {
+      saveState();
+      input.value = "";
+    }
+
+    var parts = [];
+    if (added > 0) parts.push(added + " item" + (added === 1 ? "" : "s") + " added.");
+    if (skippedDuplicate > 0) parts.push(skippedDuplicate + " duplicate" + (skippedDuplicate === 1 ? "" : "s") + " skipped.");
+    if (skippedInvalid > 0) parts.push(skippedInvalid + " invalid line" + (skippedInvalid === 1 ? "" : "s") + " skipped.");
+    if (parts.length === 0) parts.push("Enter at least one line of text.");
+
+    feedback.textContent = parts.join(" ");
+    feedback.classList.add("visible");
+
+    clearTimeout(feedbackHideTimer);
+    feedbackHideTimer = setTimeout(function () {
+      feedback.classList.remove("visible");
+      feedback.textContent = "";
+    }, FEEDBACK_HIDE_MS);
+
+    render();
+  }
+
+  function removeItem(item) {
+    var idx = state.items.indexOf(item);
+    if (idx === -1) return;
+
+    state.items.splice(idx, 1);
+    if (state.selectedText === item.text) state.selectedText = null;
+
+    saveState();
+    render();
+  }
+
+  function markAllAsNew() {
+    state.items.forEach(function (i) { i.used = false; });
+    state.selectedText = null;
+    saveState();
+    render();
+  }
+
+  function resetAllData() {
+    state.items = defaultItemSet();
+    state.selectedText = null;
+    saveState();
+    render();
+  }
+
+  // ================= Press-again-to-confirm buttons =================
+  function setUpConfirmButton(btn, defaultLabel, confirmLabel, action) {
+    var armed = false;
+    var timer = null;
+
+    function disarm() {
+      armed = false;
+      clearTimeout(timer);
+      btn.textContent = defaultLabel;
+      btn.classList.remove("confirm-armed");
+    }
+
+    btn.textContent = defaultLabel;
+    btn.addEventListener("click", function () {
+      if (!armed) {
+        armed = true;
+        btn.textContent = confirmLabel;
+        btn.classList.add("confirm-armed");
+        timer = setTimeout(disarm, CONFIRM_TIMEOUT_MS);
+      } else {
+        disarm();
+        action();
+      }
+    });
+  }
+
+  // ================= Wire up events =================
+  document.getElementById("pickRandomBtn").addEventListener("click", handlePickButtonClick);
+  document.getElementById("addItemBtn").addEventListener("click", addItems);
+  setUpConfirmButton(document.getElementById("markAllNewBtn"), "Mark all as new", "Press again to confirm", markAllAsNew);
+  setUpConfirmButton(document.getElementById("resetBtn"), "Reset all data", "Press again to confirm", resetAllData);
+
+  var autoMarkToggle = document.getElementById("autoMarkToggle");
+  autoMarkToggle.addEventListener("change", function () {
+    state.autoMarkUsed = autoMarkToggle.checked;
+    saveState();
+  });
+
+  // ================= Init =================
+  loadState();
+  autoMarkToggle.checked = state.autoMarkUsed;
+  render();
+</script>
+
+</body>
+</html>
